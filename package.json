@@ -1,0 +1,36 @@
+{
+  "name": "framework",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "setup": "pnpm install && playwright install",
+    "typecheck": "tsc --noEmit",
+    "rules:check": "node scripts/rule-engine.js",
+    "del:logs": "node scripts/clean-reports.mjs",
+    "validate": "pnpm typecheck && pnpm rules:check",
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug",
+    "test:web": "playwright test --grep @web",
+    "test:p0": "playwright test --grep @P0",
+    "report:generate": "allure generate reports/allure-results -o reports/allure-report --clean",
+    "report:open": "allure open reports/allure-results",
+    "report:watch": "allure watch reports/allure-results"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@12.18.0",
+  "type": "module",
+  "devDependencies": {
+    "@faker-js/faker": "^10.6.0",
+    "@playwright/test": "^1.65.0",
+    "@types/node": "^26.6.6",
+    "allure": "^3.33.0",
+    "allure-playwright": "^3.15.0",
+    "dotenv": "^18.0.10",
+    "typescript": "^7.0.2"
+  }
+}

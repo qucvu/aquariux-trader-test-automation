@@ -1,0 +1,6 @@
+{
+    "name": "AQX Trader - E2E Automation Report",
+    "output": "reports/allure-report",
+    "resultsDir": "reports/allure-results",
+    "open": false
+}
