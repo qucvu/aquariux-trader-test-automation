@@ -3,7 +3,7 @@ import { tradingData } from '@testdata/trading-data';
 
 const data = tradingData();
 
-test.describe('Scope 5 — Bulk close and bulk delete @web', () => {
+test.describe('Scope 5 — Bulk close and bulk delete', () => {
     test('TC-30 bulk closes several positions @P0', async ({ tradingModule, recordsModule }) => {
         const symbol = await test.step('Find an open symbol with no open positions', () =>
             tradingModule.prepareBulkSymbol(data.bulk.symbols, 'open-positions'),

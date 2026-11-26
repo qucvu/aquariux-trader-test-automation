@@ -5,7 +5,7 @@ import { tradingData, tradingStates } from '@testdata/trading-data';
 const data = tradingData();
 const marketClosed = 'Market is closed. See the environment limitations in the test plan.';
 
-test.describe('Scope 1 — Market orders with Stop Loss and Take Profit @web', () => {
+test.describe('Scope 1 — Market orders with Stop Loss and Take Profit', () => {
     test.beforeEach(async ({ tradingModule }) => {
         await tradingModule.prepareTradeScreen(data.symbol);
         test.skip(!(await tradingModule.isMarketOpen()), marketClosed);
@@ -126,7 +126,7 @@ test.describe('Scope 1 — Market orders with Stop Loss and Take Profit @web', (
     });
 });
 
-test.describe('Scope 2 — Market orders with One-Click Trading @web', () => {
+test.describe('Scope 2 — Market orders with One-Click Trading', () => {
     test.beforeEach(async ({ tradingModule }) => {
         await tradingModule.prepareTradeScreen(data.symbol);
         test.skip(!(await tradingModule.isMarketOpen()), marketClosed);

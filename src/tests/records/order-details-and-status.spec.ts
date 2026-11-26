@@ -4,7 +4,7 @@ import { tradingData, tradingStates } from '@testdata/trading-data';
 const data = tradingData();
 const marketClosed = 'The demo disables order placement when the market is closed.';
 
-test.describe('Scope 7 — Order details and transaction status @web', () => {
+test.describe('Scope 7 — Order details and transaction status', () => {
     test.beforeEach(async ({ tradingModule }) => {
         await tradingModule.prepareTradeScreen(data.symbol);
         test.skip(!(await tradingModule.isMarketOpen()), marketClosed);
@@ -65,9 +65,11 @@ test.describe('Scope 7 — Order details and transaction status @web', () => {
             expect(order.requestedVolume).toBe(data.volume.min);
             expect(order.filledVolume).toBe(data.volume.min);
             expect(order.state).toMatch(tradingStates.filled);
-            expect(await recordsModule.getPositionRecordCloseDate(orderId)).toMatch(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/);
-            expect(await recordsModule.getPositionRecordSymbol(orderId)).toBe(order.symbol);
-            expect(Number(await recordsModule.getPositionRecordVolume(orderId))).toBe(order.filledVolume);
+            await expect.poll(() => recordsModule.readPositionHistoryRecord(orderId)).toEqual({
+                closeDate: expect.stringMatching(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/),
+                symbol: order.symbol,
+                volume: order.filledVolume,
+            });
         });
     });
 

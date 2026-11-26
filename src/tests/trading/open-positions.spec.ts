@@ -3,7 +3,7 @@ import { tradingData } from '@testdata/trading-data';
 
 const data = tradingData();
 
-test.describe('Scope 4 — Open positions @web', () => {
+test.describe('Scope 4 — Open positions', () => {
     test.beforeEach(async ({ tradingModule }) => {
         await tradingModule.prepareTradeScreen(data.symbol);
         test.skip(!(await tradingModule.isMarketOpen()), 'An open market is required to create the position.');

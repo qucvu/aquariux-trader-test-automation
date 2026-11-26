@@ -1,5 +1,5 @@
-import { existsSync, mkdirSync } from 'node:fs';
-import { dirname, resolve } from 'node:path';
+import { readFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
 
 import { test as base, type BrowserContext, type Page } from '@playwright/test';
 
@@ -7,15 +7,19 @@ import { LoginPage } from '@pages/login.page';
 import { config } from '@core/config';
 import { Logger } from '@core/logger';
 
-/** Browser storage state reused across test contexts. */
-const AUTH_STATE_FILE = 'playwright/.auth/demo-account.json';
+type StorageState = Awaited<ReturnType<BrowserContext['storageState']>>;
+const DEMO_AUTH_STATE_FILE = fileURLToPath(new URL('../../playwright/.auth/demo-account.json', import.meta.url));
 
 interface AuthFixtures {
     authContext: BrowserContext;
     authPage: Page;
 }
 
-async function login(page: Page): Promise<void> {
+interface AuthWorkerFixtures {
+    demoStorageState: StorageState;
+}
+
+export async function saveDemoStorageState(page: Page): Promise<void> {
     const logger = Logger.create('AuthFixture');
 
     logger.step(1, 'Navigate to login page');
@@ -33,35 +37,19 @@ async function login(page: Page): Promise<void> {
     );
     await tokenReady.dispose();
 
-    logger.info('Login successful, session ready');
+    await page.context().storageState({ path: DEMO_AUTH_STATE_FILE });
+    logger.info('Login successful, authenticated state saved for this run');
 }
 
-async function loginAndSaveState(context: BrowserContext, statePath: string): Promise<void> {
-    const logger = Logger.create('AuthFixture');
-    const page = await context.newPage();
+export const test = base.extend<AuthFixtures, AuthWorkerFixtures>({
+    demoStorageState: [async ({}, use) => {
+        const state = await readFile(DEMO_AUTH_STATE_FILE, 'utf8');
+        await use(JSON.parse(state) as StorageState);
+    }, { scope: 'worker' }],
 
-    try {
-        await login(page);
-    } finally {
-        await page.close();
-    }
-
-    mkdirSync(dirname(statePath), { recursive: true });
-    await context.storageState({ path: statePath });
-
-    logger.info(`Cached the authenticated session in ${AUTH_STATE_FILE}`);
-}
-
-export const test = base.extend<AuthFixtures>({
-    authContext: async ({ browser }, use) => {
-        const statePath = resolve(process.cwd(), AUTH_STATE_FILE);
-        const hasCachedState = existsSync(statePath);
-        const context = await browser.newContext(hasCachedState ? { storageState: statePath } : undefined);
-
+    authContext: async ({ browser, baseURL, demoStorageState }, use) => {
+        const context = await browser.newContext({ baseURL, storageState: demoStorageState });
         try {
-            if (!hasCachedState) {
-                await loginAndSaveState(context, statePath);
-            }
             await use(context);
         } finally {
             await context.close();

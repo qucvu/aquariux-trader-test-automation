@@ -2,5 +2,14 @@
     "name": "AQX Trader - E2E Automation Report",
     "output": "reports/allure-report",
     "resultsDir": "reports/allure-results",
-    "open": false
+    "open": false,
+    "plugins": {
+        "awesome": {
+            "options": {
+                "groupBy": ["subSuite"],
+                "appendTitlePath": false,
+                "defaultSortBy": "name,asc"
+            }
+        }
+    }
 }

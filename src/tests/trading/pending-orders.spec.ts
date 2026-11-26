@@ -4,7 +4,7 @@ import { dateInDays, toIsoDate } from '@utils/dates';
 
 const data = tradingData();
 
-test.describe('Scope 3 — Pending orders and expiry options @web', () => {
+test.describe('Scope 3 — Pending orders and expiry options', () => {
     test.beforeEach(async ({ tradingModule }) => {
         await tradingModule.prepareTradeScreen(data.symbol);
         test.skip(!(await tradingModule.isMarketOpen()), 'The demo disables order placement when the market is closed.');

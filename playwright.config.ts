@@ -14,7 +14,7 @@ export default defineConfig({
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
-  workers: 4,
+  workers: 1,
   timeout: 60 * 1000,
   reporter: [
     ['list', { printSteps: true }],
@@ -23,7 +23,7 @@ export default defineConfig({
     ['allure-playwright', { resultsDir: 'reports/allure-results' }],
   ],
   expect: {
-    timeout: 15_000,
+    timeout: 20_000,
   },
   use: {
     baseURL: process.env.WEB_APP_URL,
@@ -35,45 +35,29 @@ export default defineConfig({
 
   projects: [
     {
-      name: 'chromium',
+      name: 'auth-setup',
+      testMatch: '**/auth.setup.ts',
       use: { ...devices['Desktop Chrome'] },
     },
 
     // {
-    //   name: 'firefox',
-    //   use: { ...devices['Desktop Firefox'] },
+    //   name: 'chromium',
+    //   use: { ...devices['Desktop Chrome'] },
+    //   dependencies: ['auth-setup'],
     // },
+
+    {
+      name: 'firefox',
+      use: { ...devices['Desktop Firefox'] },
+      dependencies: ['auth-setup'],
+    },
 
     // {
     //   name: 'webkit',
     //   use: { ...devices['Desktop Safari'] },
+    //   dependencies: ['auth-setup'],
     // },
 
-    /* Test against mobile viewports. */
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
-    // },
-    // {
-    //   name: 'Mobile Safari',
-    //   use: { ...devices['iPhone 12'] },
-    // },
-
-    /* Test against branded browsers. */
-    // {
-    //   name: 'Microsoft Edge',
-    //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-    // },
-    // {
-    //   name: 'Google Chrome',
-    //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-    // },
-  ],
-  /* Run your local dev server before starting the tests */
-  // webServer: {
-  //   command: 'npm run start',
-  //   url: 'http://localhost:3000',
-  //   reuseExistingServer: !process.env.CI,
-  // },
+  ]
 
 });

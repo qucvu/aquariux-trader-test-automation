@@ -5,7 +5,7 @@ import { dateInDays } from '@utils/dates';
 const data = tradingData();
 const marketClosed = 'The demo disables order placement when the market is closed.';
 
-test.describe('Scope 6 — Trading records and notifications @web', () => {
+test.describe('Scope 6 — Trading records and notifications', () => {
     test.beforeEach(async ({ tradingModule }) => {
         await tradingModule.prepareTradeScreen(data.symbol);
         test.skip(!(await tradingModule.isMarketOpen()), marketClosed);

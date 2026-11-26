@@ -100,9 +100,21 @@ export class RecordsModule {
         return index < 0 ? '' : this.orders.getVolume(index);
     }
 
-    async getPositionRecordCloseDate(orderId: string): Promise<string> {
-        await this.orders.openPositionsHistory();
-        return this.orders.getCellValue(orderId, 'close-date');
+    async readPositionHistoryRecord(orderId: string): Promise<{
+        symbol: string;
+        closeDate: string;
+        volume: number;
+    }> {
+        const [symbol, closeDate, volume] = await Promise.all([
+            this.orders.getSymbol(orderId),
+            this.orders.getCellValue(orderId, 'close-date'),
+            this.orders.getVolume(orderId),
+        ]);
+        return {
+            symbol,
+            closeDate,
+            volume: volume === '' ? Number.NaN : Number(volume.replaceAll(',', '')),
+        };
     }
 
     async getOrderRecordState(orderId: string): Promise<string> {
