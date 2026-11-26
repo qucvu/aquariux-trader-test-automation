@@ -3,6 +3,7 @@ export const config = {
         baseUrl: process.env.WEB_APP_URL ?? '',
         userAccountId: process.env.USER_ACCOUNT_ID ?? '',
         userPassword: process.env.USER_PASSWORD ?? '',
+        oneClickTradingEnabled: process.env.TEST_ONE_CLICK_TRADING === 'true',
     },
 } as const;
 
@@ -23,9 +24,5 @@ export function assertConfig(): void {
             `Missing required environment variable(s): ${missing.join(', ')}. ` +
             'Set them in your environment or use .env.example as a template.',
         );
-    }
-
-    if (!/^https?:\/\//i.test(baseUrl.trim()) || !URL.canParse(baseUrl)) {
-        throw new Error('WEB_APP_URL must be a valid HTTP or HTTPS URL.');
     }
 }

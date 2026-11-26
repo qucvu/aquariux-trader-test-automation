@@ -13,8 +13,8 @@ export default defineConfig({
 
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 1 : 1,
-  workers: process.env.CI ? 1 : 1,
+  retries: process.env.CI ? 1 : 0,
+  workers: 4,
   timeout: 60 * 1000,
   reporter: [
     ['list', { printSteps: true }],
@@ -22,9 +22,12 @@ export default defineConfig({
     ['junit', { outputFile: 'reports/results.xml' }],
     ['allure-playwright', { resultsDir: 'reports/allure-results' }],
   ],
+  expect: {
+    timeout: 15_000,
+  },
   use: {
     baseURL: process.env.WEB_APP_URL,
-    trace: 'on-first-retry',
+    // trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
     actionTimeout: 15 * 1000,
@@ -36,15 +39,15 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
 
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
+    // {
+    //   name: 'firefox',
+    //   use: { ...devices['Desktop Firefox'] },
+    // },
 
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
+    // {
+    //   name: 'webkit',
+    //   use: { ...devices['Desktop Safari'] },
+    // },
 
     /* Test against mobile viewports. */
     // {

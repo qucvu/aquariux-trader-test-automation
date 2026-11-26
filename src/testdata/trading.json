@@ -1,0 +1,25 @@
+{
+  "symbol": "EURUSD",
+  "symbolSecondary": "NZDJPY",
+  "volume": {
+    "min": 0.1,
+    "belowMin": 0
+  },
+  "stopLoss": {
+    "points": 200
+  },
+  "takeProfit": {
+    "points": 200
+  },
+  "pending": {
+    "offsetPoints": 300,
+    "volume": 0.1
+  },
+  "bulk": {
+    "symbols": ["EURGBP", "CADJPY", "EURNZD", "USDSGD", "USDJPY", "AUDUSD"]
+  },
+  "close": {
+    "partialVolume": 0.1,
+    "excessiveVolume": 5
+  }
+}

@@ -1,7 +1,7 @@
 {
-  "name": "framework",
+  "name": "aqx-trader-e2e",
   "version": "1.0.0",
-  "description": "",
+  "description": "Playwright end-to-end tests for Aquariux WebTrader, covering order placement, position management, and trading history",
   "main": "index.js",
   "scripts": {
     "setup": "pnpm install && playwright install",
