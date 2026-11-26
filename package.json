@@ -4,7 +4,7 @@
   "description": "Playwright end-to-end tests for Aquariux WebTrader, covering order placement, position management, and trading history",
   "main": "index.js",
   "scripts": {
-    "setup": "pnpm install && playwright install",
+    "setup": "pnpm install && playwright install chromium firefox",
     "typecheck": "tsc --noEmit",
     "rules:check": "node scripts/rule-engine.js",
     "del:logs": "node scripts/clean-reports.mjs",
