@@ -4,7 +4,7 @@ Follow this guide when working on a Playwright test.
 
 ## Framework entry points
 
-- [playwright.config.ts](playwright.config.ts) discovers specs under `src/tests/` and runs the enabled browser projects with one worker. HTML, JUnit, and Allure results are written under `reports/`.
+- [playwright.config.ts](playwright.config.ts) discovers specs under `src/tests/` and runs the enabled browser projects. Use one worker when running against one demo account. HTML, JUnit, and Allure results are written under `reports/`.
 - Use [.env.example](.env.example) as the template for `.env`. Set `WEB_APP_URL` to the app origin and provide the demo credentials through `USER_ACCOUNT_ID` and `USER_PASSWORD`. [Global setup](src/core/global-setup.ts) checks that all three values are present.
 - [`@fixtures`](src/fixtures/index.ts) is the entry point for specs. [Authentication setup](src/tests/auth.setup.ts) uses the default `page` to sign in once and save the browser storage state at `playwright/.auth/demo-account.json`. Trading and records fixtures use `authPage` to restore that state in a separate context for each test.
 - The [test plan](specs/test-plan.md) describes the 40 scenarios under `src/tests/trading/` and `src/tests/records/`. Shared trading data lives in [src/testdata/trading.json](src/testdata/trading.json).

@@ -10,6 +10,7 @@
     "del:logs": "node scripts/clean-reports.mjs",
     "del:auth": "node scripts/clean-auth.mjs",
     "validate": "pnpm typecheck && pnpm rules:check",
+    "test:prepare": "pnpm validate && pnpm del:logs && pnpm del:auth",
     "test": "playwright test",
     "test:headed": "playwright test --headed",
     "test:ui": "playwright test --ui",

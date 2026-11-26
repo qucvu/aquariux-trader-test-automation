@@ -1,104 +1,61 @@
 # Aquariux WebTrader E2E Tests
 
-This Playwright and TypeScript suite tests order placement, position management, and trading records on the Aquariux WebTrader demo. The suite is verified on desktop Chromium and Firefox. The [test plan](specs/test-plan.md#scope-and-spec-mapping) maps all 40 cases to their specs and records the browser results.
+A Playwright and TypeScript suite for order placement, position management, and trading records on the WebTrader demo. The [test plan](specs/test-plan.md) maps the 40 cases to their specs and records the Chromium and Firefox results.
 
 ## 1. Install Node.js and pnpm
 
-Install [Node.js](https://nodejs.org/en/download) with npm. This project was verified with Node.js **26.13.0** and pins pnpm **12.18.0** in [package.json](package.json).
-
-Open a terminal and check that Node.js and npm are available. Install the pinned pnpm version and check that it is on your PATH. [pnpm installation guide](https://pnpm.io/installation#using-npm)
+Install Node.js with npm. This project was verified with Node.js 26.13.0 and uses pnpm 12.18.0.
 
 ```sh
-node --version
-npm --version
 npm install --global pnpm@12.18.0
 pnpm --version
 ```
 
-If the terminal cannot find pnpm after installation, open a new terminal and run `pnpm --version` again.
-
 ## 2. Install project dependencies and browsers
 
-Open the repository folder containing `package.json` and `playwright.config.ts`. Install dependencies from the lockfile, then download the browser builds used by Playwright. [Playwright browser installation guide](https://playwright.dev/docs/browsers#install-browsers)
+Run this from the repository root to install the dependencies and the Chromium and Firefox builds used by Playwright.
 
 ```sh
-pnpm install --frozen-lockfile
-pnpm exec playwright install chromium firefox
+pnpm run setup
 ```
-
-The repository also provides `pnpm run setup`, which installs project dependencies and both browsers. On Linux, if browser system libraries are missing, run `pnpm exec playwright install --with-deps chromium firefox`. [Playwright system dependencies](https://playwright.dev/docs/browsers#install-system-dependencies)
 
 ## 3. Configure the demo account
 
-On a fresh checkout, copy [`.env.example`](.env.example) to `.env` in the repository root. In PowerShell, run the following command.
+Copy `.env.example` to `.env` in the repository root. Use the demo credentials and set the WebTrader interface to **English**. Run order-placement cases while the selected market is open.
 
-```powershell
-Copy-Item -LiteralPath .env.example -Destination .env
-```
-
-Edit `.env` with the values for your dedicated demo account.
-
-| Variable | Value |
-|---|---|
-| `WEB_APP_URL` | `https://aqxtrader.aquariux.com`. Use the origin shown here. The tests supply their own page paths. |
-| `USER_ACCOUNT_ID` | The demo account ID provided for the assessment. |
-| `USER_PASSWORD` | The password for the same demo account. Use single quotes in `.env` if the password contains `#`. |
-| `TEST_ONE_CLICK_TRADING` | Start with `false` and disable One-Click Trading in the demo account. Set it to `true` after enabling the setting in the app. |
-
-Set the **WebTrader interface to English** before running the suite. Cases that place orders require an open market for the selected symbol. The suite creates and modifies demo orders and positions, and some records can persist between runs. Keep your `.env` local.
+Keep `TEST_ONE_CLICK_TRADING` in sync with WebTrader. Use `false` for TC-10 and TC-11. Enable One-Click Trading in WebTrader and set the flag to `true` for TC-12 and TC-13.
 
 ## 4. Run the tests
 
-Start with validation and test discovery. Discovery lists the authentication setup and the 40 scenarios for each selected browser without opening the demo.
+For a fresh full-suite run, use `pnpm test:prepare` to validate the code, then clear the previous Allure results and saved demo session. The authentication setup creates a fresh session when the tests start. Run with one worker when using a single demo account.
 
 ```sh
-pnpm validate
-pnpm exec playwright test --list
+pnpm test:prepare
+pnpm test --workers=1
 ```
 
-`pnpm validate` runs the TypeScript and framework rule checks. `pnpm test` runs the Chromium and Firefox projects with one worker. Use `--project` to select a single browser. [Playwright config](playwright.config.ts)
+Save any Allure results you want to keep before preparing a fresh run.
 
-The `auth-setup` project signs in once on Chromium and saves the session at `playwright/.auth/demo-account.json`. Install Chromium for setup even when running a different browser project. Setup replaces the file after a successful login, and the browser projects then read that session. The file stays local through `.gitignore`.
-
-In Playwright UI mode (`pnpm test:ui`), enable `auth-setup` in the project filter and run its login test before running an individual trading test. Run setup again when the session expires.
-
-| What to run | Command |
-|---|---|
-| Entire suite on the enabled projects | `pnpm test` |
-| A specific browser | `pnpm test --project=chromium` or `pnpm test --project=firefox` |
-| One spec | `pnpm test market-orders.spec.ts --project=chromium` |
-| One case by ID | `pnpm test --project=chromium --grep TC-21` |
-| Critical scenarios | `pnpm test:p0 --project=chromium` |
-| Chromium with a visible browser window | `pnpm test:headed --project=chromium` |
-
-With One-Click Trading disabled, TC-10 and TC-11 cover the confirmation dialog. To run the enabled variants, turn the setting on in WebTrader and set `TEST_ONE_CLICK_TRADING=true`. Use the following command to select the two cases.
+To run one browser or one case, use the matching filter.
 
 ```sh
-pnpm test --project=chromium --grep "TC-12|TC-13"
+pnpm test --project=chromium --workers=1
+pnpm test --project=firefox --workers=1
+pnpm test --project=chromium --grep TC-39
 ```
 
 ## 5. View the results
 
-| Report | How to open it |
-|---|---|
-| Playwright HTML | `pnpm exec playwright show-report reports/html` |
-| JUnit XML | Read `reports/results.xml` for the most recent invocation. |
-| Allure | `pnpm report:open` opens the report from `reports/allure-results`. Run `pnpm report:generate` to export it to `reports/allure-report`. |
-
-Allure lists **Authentication setup** separately and groups the 40 scenarios by **Scope**. For case details and known limitations, see the [test plan](specs/test-plan.md).
+- **Allure** — `pnpm report:open` or `pnpm report:generate` to export the report.
+- **Playwright HTML** — `pnpm exec playwright show-report reports/html`.
+- **JUnit XML** — `reports/results.xml`.
 
 ### Watch Allure results live
 
-Start the watcher in the first terminal. Use the local URL it prints if the report does not open automatically.
+After `pnpm test:prepare`, start the watcher in one terminal. Then run `pnpm test --workers=1` in a second terminal.
 
 ```sh
-pnpm report:watch --host 127.0.0.1 --open --output reports/allure-live
+pnpm report:watch
 ```
 
-Start the tests from the same repository in a second terminal.
-
-```sh
-pnpm test
-```
-
-The watcher updates the report as completed test results arrive in `reports/allure-results`. Start it before the test run to see the whole run live. The live output is written to `reports/allure-live`, separate from the export created by `pnpm report:generate`. To include results that were already on disk when the watcher started, pass `--no-new-only`. Press `Ctrl+C` in the watcher terminal when you are finished. [Allure 3 real-time reporting](https://allurereport.org/docs/v3/)
+The report updates when each test finishes. Open the local URL printed in the terminal if needed. Stop the watcher with `Ctrl+C`.

@@ -48,7 +48,7 @@ The same **40 scenarios** apply to the Chromium and Firefox desktop projects. Se
 | `chromium` | Desktop Chrome |
 | `firefox` | Desktop Firefox |
 
-The current configuration uses one worker, a 60-second overall timeout per test, a 20-second assertion timeout, and a 15-second action timeout. Each selected browser project depends on `auth-setup`, which appears separately in the report. If setup fails, the dependent scenarios do not start. Run browser projects separately when comparing results so each run has its own browser and account setting.
+Use one worker with a single demo account. The suite allows 60 seconds per test, 20 seconds for assertions, and 15 seconds for actions. Each selected browser project depends on `auth-setup`, which appears separately in the report. If setup fails, the dependent scenarios do not start. Run browser projects separately when comparing results so each run has its own browser and account setting.
 
 ## Screens and test data
 
