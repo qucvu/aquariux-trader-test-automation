@@ -44,6 +44,8 @@ pnpm test --project=firefox --workers=1
 pnpm test --project=chromium --grep TC-39
 ```
 
+Use `pnpm exec playwright test --list` to verify discovery. With both browsers enabled, it lists 40 scenarios per browser and one shared authentication setup.
+
 ## 5. View the results
 
 - **Allure** — `pnpm report:open` or `pnpm report:generate` to export the report.
